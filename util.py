@@ -21,6 +21,7 @@ def filter_data(df: pd.DataFrame, time_range: str, week_day: str, start_time: st
 
     time = df['ds']
     df['day_of_week'] = time.dt.day_name()
+    df['Day'] = time.dt.day
     df.index = df['ds']
     last_date = df['ds'][-1]
 
