@@ -89,8 +89,5 @@ def main():
             histogram(filtered_df)
             scatter(filtered_df)
 
-            
-
-
 if __name__ == '__main__':
     main()

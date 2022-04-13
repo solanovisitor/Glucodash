@@ -2,6 +2,7 @@ from tracemalloc import start
 from typing import Any
 import pandas as pd
 import datetime
+import streamlit as st
 
 def preprocessing(df):
 
@@ -49,6 +50,7 @@ def filter_data(df: pd.DataFrame, time_range: str, week_day: str, start_time: st
         df = df
     if week_day != 'Every Day':
         df = df.loc[df['day_of_week'] == week_day]
+        st.dataframe(df)
     if end_time is not None:
         df = df.between_time(start_time, end_time)
 

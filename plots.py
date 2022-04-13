@@ -1,8 +1,8 @@
-from unicodedata import name
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import datetime as dt
 
 def histogram(df: pd.DataFrame):
     # Add histogram data
@@ -50,7 +50,7 @@ def scatter(df: pd.DataFrame):
     # extract points as plain x and y
     x_trend = help_fig["data"][1]['x']
     y_trend = help_fig["data"][1]['y']
-    
+
         # add the x,y data as a scatter graph object
     fig.add_trace(
         go.Scatter(x=x_trend, y=y_trend, name='Glucose trend'))
@@ -66,5 +66,25 @@ def scatter(df: pd.DataFrame):
     , title='Glucose along with limits and trend'
     )
 
+    time = df['ds']
+    df['Day'] = time.dt.date
+    st.dataframe(df)
+    dias = []
+    for dia in df['Day'].unique():
+        dias.append(dia)
+
+    fig.update_layout(
+                        xaxis = dict(
+                            type = 'category',
+                            showgrid=True,
+                            ticks="outside",
+                            tickson="boundaries",
+                            ticklen=1,
+                            categoryorder='array',
+                            categoryarray=dias,
+                            tickformat: '%d/%m'
+                        ),
+                        yaxis = dict(showgrid=False)
+                    )
 
     st.plotly_chart(fig, use_container_width=True)
