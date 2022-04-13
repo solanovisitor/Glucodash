@@ -1,5 +1,5 @@
 import pandas as pd
-import datetime as datetime
+import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.nonparametric.smoothers_lowess import lowess
@@ -386,7 +386,7 @@ def CONGA24(df):
             CONGA24 (float): continuous overall net glycemic action over 24 hours
             
     """
-    df['Timefrommidnight'] =  df['Time'].dt.time
+    df['Timefrommidnight'] =  df['ds'].dt.time
     lists=[]
     for i in range(0, len(df['Timefrommidnight'])):
         lists.append(int(df['Timefrommidnight'][i].strftime('%H:%M:%S')[0:2])*60 + int(df['Timefrommidnight'][i].strftime('%H:%M:%S')[3:5]) + round(int(df['Timefrommidnight'][i].strftime('%H:%M:%S')[6:9])/60))
@@ -489,13 +489,13 @@ def plotybounds(df, upperbound = 180, lowerbound = 70, size=15):
             plot of y with user defined boundary lines
             
     """
-    plt.figure(figsize=(20,5))
+    plt.figure(figsize=(15,3))
     plt.rcParams.update({'font.size': size})
     plt.plot(df['ds'], df['y'], '.', color = '#1f77b4')
     plt.axhline(y=upperbound, color='red', linestyle='-')
     plt.axhline(y=lowerbound, color='orange', linestyle='-')
-    plt.ylabel('y')
-    plt.show()
+    plt.ylabel('Glucose')
+    st.pyplot(plt)
 
 def plotysmooth(df, size=15):
     """
