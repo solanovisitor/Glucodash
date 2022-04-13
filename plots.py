@@ -3,7 +3,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from statsmodels.nonparametric.smoothers_lowess import lowess
 
 def histogram(df: pd.DataFrame):
     # Add histogram data

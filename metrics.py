@@ -2,7 +2,6 @@ import pandas as pd
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
-from statsmodels.nonparametric.smoothers_lowess import lowess
 from scipy.stats import iqr
 
 """
@@ -452,67 +451,3 @@ def summary(df):
     Q3G = np.nanpercentile(df['y'], 75)
     
     return meanG, medianG, minG, maxG, Q1G, Q3G
-
-def plotysd(df, sd=1, size=15):
-    """
-        Plots y with specified standard deviation lines
-        Args:
-            (pd.DataFrame): dataframe of data with DateTime, Time and y columns
-            sd (integer): standard deviation lines to plot (default=1)
-            size (integer): font size for plot (default=15)
-        Returns:
-            plot of y with standard deviation lines
-            
-    """
-    y_mean = np.mean(df['y'])
-    up = np.mean(df['y']) + sd*np.std(df['y'])
-    dw = np.mean(df['y']) - sd*np.std(df['y'])
-
-    plt.figure(figsize=(20,5))
-    plt.rcParams.update({'font.size': size})
-    plt.plot(df['Time'], df['y'], '.', color = '#1f77b4')
-    plt.axhline(y=y_mean, color='red', linestyle='-')
-    plt.axhline(y=up, color='pink', linestyle='-')
-    plt.axhline(y=dw, color='pink', linestyle='-')
-    plt.ylabel('y')
-    plt.show()
-
-def plotybounds(df, upperbound = 180, lowerbound = 70, size=15):
-    """
-        Plots y with user-defined boundaries
-        Args:
-            (pd.DataFrame): dataframe of data with DateTime, Time and y columns
-            upperbound (integer): user defined upper bound for y line to plot (default=180)
-            lowerbound (integer): user defined lower bound for y line to plot (default=70)
-            size (integer): font size for plot (default=15)
-        Returns:
-            plot of y with user defined boundary lines
-            
-    """
-    plt.figure(figsize=(15,3))
-    plt.rcParams.update({'font.size': size})
-    plt.plot(df['ds'], df['y'], '.', color = '#1f77b4')
-    plt.axhline(y=upperbound, color='red', linestyle='-')
-    plt.axhline(y=lowerbound, color='orange', linestyle='-')
-    plt.ylabel('Glucose')
-    st.pyplot(plt)
-
-def plotysmooth(df, size=15):
-    """
-        Plots smoothed y plot (with LOWESS smoothing)
-        Args:
-            (pd.DataFrame): dataframe of data with DateTime, Time and y columns
-            size (integer): font size for plot (default=15)
-        Returns:
-            LOWESS-smoothed plot of y
-            
-    """
-    filteres = lowess(df['y'], df['Time'], is_sorted=True, frac=0.025, it=0)
-    filtered = pd.to_datetime(filteres[:,0], format='%Y-%m-%dT%H:%M:%S') 
-    
-    plt.figure(figsize=(20,5))
-    plt.rcParams.update({'font.size': size})
-    plt.plot(df['ds'], df['y'], '.')
-    plt.plot(filtered, filteres[:,1], 'r')
-    plt.ylabel('y')
-    plt.show()
