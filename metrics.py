@@ -1,7 +1,7 @@
 import pandas as pd
+pd.options.mode.chained_assignment = None
 import streamlit as st
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy.stats import iqr
 
 """
