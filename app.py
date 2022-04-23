@@ -44,9 +44,9 @@ def main():
         devices = ['Freestyle Libre', 'Dexcom', 'Nightscout']
         device = st.selectbox('Select your device', devices)
         data = st.file_uploader('Upload the glucose data downloaded from the LibreView website', type='csv')
-        if data is not None:
-            final_data = FinalData(data, device)
-            preprocessed_df = final_data.preprocessing()
+        # if data is not None:
+        #     final_data = FinalData(data, device)
+        #     preprocessed_df = final_data.preprocessing()
         ranges = ['2 weeks', '1 month', '3 months', '6 months', '1 year', 'All times']
         day_names = ['Every Day', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         boolean = ['No', 'Yes']
@@ -64,8 +64,8 @@ def main():
             end_time = None
 
         if data is not None:
-
-            filtered_df = FinalData.filter_data(preprocessed_df, time_range, week_day, start_time, end_time)
+            final_data = FinalData(data, device, time_range, week_day, start_time, end_time)
+            filtered_df = final_data.filter_data()
             st.header('Check the resulting metrics below')
             b_day = best_day(filtered_df)
             st.subheader(f'The lowest GMI was on the {b_day}')

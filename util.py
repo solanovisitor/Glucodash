@@ -5,9 +5,13 @@ import streamlit as st
 
 class FinalData:
 
-    def __init__(self, data, device: str):
+    def __init__(self, data, device: str, time_range: str, week_day: str, start_time: str, end_time):
         self.data = data
         self.device = device
+        self.time_range = time_range
+        self.week_day = week_day
+        self.start_time = start_time
+        self.end_time = end_time
 
     def preprocessing(self):
 
@@ -49,9 +53,9 @@ class FinalData:
 
         return df
 
-    @staticmethod
-    def filter_data(df: pd.DataFrame, time_range: str, week_day: str, start_time: str, end_time):
+    def filter_data(self):
 
+        df = self.preprocessing()
         time = df['ds']
         df['day_of_week'] = time.dt.day_name()
         df['Day'] = time.dt.day
@@ -63,14 +67,14 @@ class FinalData:
 
         ranges = {'2 weeks': 14, '1 month': 30, '3 months': 90, '6 months': 180, '1 year': 365}
 
-        if time_range != 'All times':
-            curr_range = ranges[time_range]
+        if self.time_range != 'All times':
+            curr_range = ranges[self.time_range]
             starter = last_date-datetime.timedelta(days=curr_range)
             mask = (df['ds'] > starter) & (df['ds'] <= last_date)
             df = df.loc[mask]
-        if week_day != 'Every Day':
-            df = df.loc[df['day_of_week'] == week_day]
-        if end_time is not None:
-            df = df.between_time(start_time, end_time)
+        if self.week_day != 'Every Day':
+            df = df.loc[df['day_of_week'] == self.week_day]
+        if self.end_time is not None:
+            df = df.between_time(self.start_time, self.end_time)
 
         return df
