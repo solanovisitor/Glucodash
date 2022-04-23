@@ -134,7 +134,7 @@ def intradaysd(df):
     intradaysd_sd = np.std(intradaysd)
     return intradaysd_mean, intradaysd_median, intradaysd_sd
 
-def MAGE(df, std=1):
+def MAGE(df: pd.DataFrame, std=1):
     """
         Mean amplitude of glycemic excursions (MAGE), together with mean and SD,
         is the most popular parameter for assessing glycemic variability and is calculated
@@ -220,7 +220,7 @@ def MAGE(df, std=1):
     
     return round(mage,3)
 
-def J_index(df):
+def J_index(df: pd.DataFrame):
     """
         J index is a measure of quality of glycemic control based on
         the combination of information from the mean and SD calculated as 0.001 x (mean + SD)
@@ -235,7 +235,7 @@ def J_index(df):
     J = 0.001*((np.mean(df['y'])+np.std(df['y']))**2)
     return J
 
-def LBGI_HBGI(df):
+def LBGI_HBGI(df: pd.DataFrame):
     """
         Connecter function to calculate rh and rl, used for ADRR function
         Args:
@@ -268,7 +268,7 @@ def LBGI_HBGI(df):
     
     return LBGI, HBGI, rh, rl
 
-def LBGI(df):
+def LBGI(df: pd.DataFrame):
     """
         Computes and returns the low blood y index
         Args:
@@ -288,7 +288,7 @@ def LBGI(df):
     LBGI = np.mean(rl)
     return LBGI
 
-def HBGI(df):
+def HBGI(df: pd.DataFrame):
     """
         Computes and returns the high blood y index
         Args:
@@ -308,7 +308,7 @@ def HBGI(df):
     HBGI = np.mean(rh)
     return HBGI
 
-def ADRR(df):
+def ADRR(df: pd.DataFrame):
     """
         Computes and returns the average daily risk range, an assessment of total daily y variations within risk space
         Args:
@@ -327,7 +327,7 @@ def ADRR(df):
     ADRRx = np.mean(ADRRl)
     return ADRRx
 
-def uniquevalfilter(df, value):
+def uniquevalfilter(df: pd.DataFrame, value):
     """
         Supporting function for MODD and CONGA24 functions
         Args:
@@ -343,7 +343,7 @@ def uniquevalfilter(df, value):
     MODD_n = np.nanmean(diff)
     return MODD_n
 
-def MODD(df):
+def MODD(df: pd.DataFrame):
     """
         Computes and returns the mean of daily differences. Examines mean of value + value 24 hours before
         Args:
@@ -374,7 +374,7 @@ def MODD(df):
     MODD = np.nanmean(MODD_n)
     return MODD
 
-def CONGA24(df):
+def CONGA24(df: pd.DataFrame):
     """
         Computes and returns the continuous overall net glycemic action over 24 hours
         Args:
@@ -405,7 +405,7 @@ def CONGA24(df):
     CONGA24 = np.nanstd(MODD_n)
     return CONGA24
 
-def GMI(df):
+def GMI(df: pd.DataFrame):
     """
         Computes and returns the y management index
         Args:
@@ -417,7 +417,7 @@ def GMI(df):
     GMI = 3.31 + (0.02392*np.mean(df['y']))
     return GMI
 
-def eA1c(df):
+def eA1c(df: pd.DataFrame):
     """
         Computes and returns the American Diabetes Association estimated HbA1c
         Args:
@@ -429,7 +429,7 @@ def eA1c(df):
     eA1c = (46.7 + np.mean(df['y']))/ 28.7 
     return eA1c
 
-def summary(df): 
+def summary(df: pd.DataFrame): 
     """
         Computes and returns y summary metrics
         Args:
@@ -451,3 +451,10 @@ def summary(df):
     Q3G = np.nanpercentile(df['y'], 75)
     
     return meanG, medianG, minG, maxG, Q1G, Q3G
+
+def best_day(df: pd.DataFrame):
+    grouped_by_day = df.groupby('dd_mm_yy').mean()
+    grouped_by_day = grouped_by_day.assign(Best_Day = lambda x: (3.31 + (0.02392*(x['y']))))
+    best_day = grouped_by_day['y'].idxmin()
+
+    return best_day

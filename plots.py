@@ -94,13 +94,12 @@ def scatter(df: pd.DataFrame):
 def one_day_scatter(df: pd.DataFrame):
 
     df.reset_index(drop=True, inplace=True)
-    df['ds'] = df['ds'].dt.strftime('%H:%M')
-    mean_df = df.groupby('ds').mean()
+    mean_df = df.groupby('hh_mm').mean()
     mean_df.reset_index(drop=False, inplace=True)
-    mean_df['ds'] = pd.to_datetime(mean_df['ds'])
-    std_df = df.groupby('ds').std()
+    mean_df['hh_mm'] = pd.to_datetime(mean_df['hh_mm'])
+    std_df = df.groupby('hh_mm').std()
     std_df.reset_index(drop=False, inplace=True)
-    std_df['ds'] = pd.to_datetime(std_df['ds'])
+    std_df['hh_mm'] = pd.to_datetime(std_df['hh_mm'])
 
     # create a blank canvas
     fig = go.Figure()
@@ -108,9 +107,9 @@ def one_day_scatter(df: pd.DataFrame):
     fig.add_hline(y=140, line_color='purple')
     fig.add_hline(y=100, line_color='purple')
 
-    help_fig = px.scatter(mean_df, x=mean_df['ds'], y=mean_df['y'], trendline="lowess", trendline_options=dict(frac=0.1))
-    help_fig2 = px.scatter(mean_df, x=mean_df['ds'], y=mean_df['y']+std_df['y'], trendline="lowess", trendline_options=dict(frac=0.1))
-    help_fig3 = px.scatter(mean_df, x=mean_df['ds'], y=mean_df['y']-std_df['y'], trendline="lowess", trendline_options=dict(frac=0.1))
+    help_fig = px.scatter(mean_df, x=mean_df['hh_mm'], y=mean_df['y'], trendline="lowess", trendline_options=dict(frac=0.1))
+    help_fig2 = px.scatter(mean_df, x=mean_df['hh_mm'], y=mean_df['y']+std_df['y'], trendline="lowess", trendline_options=dict(frac=0.1))
+    help_fig3 = px.scatter(mean_df, x=mean_df['hh_mm'], y=mean_df['y']-std_df['y'], trendline="lowess", trendline_options=dict(frac=0.1))
 
     # extract points as plain x and y
     x_trend = help_fig["data"][1]['x']
