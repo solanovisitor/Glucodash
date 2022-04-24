@@ -55,7 +55,7 @@ def main():
         if data is not None:
             cgm = CgmMetric(data, device, time_range, week_day, start_time, end_time)
             st.header('Check the resulting metrics below')
-            b_day = cgm_metrics.best_day()
+            b_day = cgm.best_day()
             st.subheader(f'The lowest GMI was on the {b_day}')
 
             with st.container():
