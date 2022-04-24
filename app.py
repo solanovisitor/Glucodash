@@ -52,9 +52,8 @@ def main():
         else:
             start_time = None
             end_time = None
-
         if data is not None:
-            cgm_metrics = CgmMetric(data, device, time_range, week_day, start_time, end_time)
+            cgm = CgmMetric(data, device, time_range, week_day, start_time, end_time)
             st.header('Check the resulting metrics below')
             b_day = cgm_metrics.best_day()
             st.subheader(f'The lowest GMI was on the {b_day}')
@@ -63,24 +62,24 @@ def main():
 
                 col1, col2, col3, col4 = st.columns(4)
 
-                n_data = cgm_metrics.available_data()
-                avg = round(cgm_metrics.average_glucose(), 2)
-                std = round(cgm_metrics.sd(),2)
-                ea1c = round(cgm_metrics.eA1c(), 2)
-                trange = f'{cgm_metrics.time_in_range()}%'
-                thyper = f'{cgm_metrics.hyper_time()}%'
-                thypo = f'{cgm_metrics.hypo_time()}%'
-                iqr = cgm_metrics.inter_qr()
-                intersd = round(cgm_metrics.interdaysd(), 2)
-                intrasd = round(cgm_metrics.intradaysd()[0], 2)
-                mage = round(cgm_metrics.MAGE(), 2)
-                jindex = round(cgm_metrics.J_index(), 2)
-                lgbi = round(cgm_metrics.LBGI(), 2)
-                hbgi = round(cgm_metrics.HBGI(), 2)
+                n_data = cgm.available_data()
+                avg = round(cgm.average_glucose(), 2)
+                std = round(cgm.sd(),2)
+                ea1c = round(cgm.eA1c(), 2)
+                trange = f'{cgm.time_in_range()}%'
+                thyper = f'{cgm.hyper_time()}%'
+                thypo = f'{cgm.hypo_time()}%'
+                iqr = cgm.inter_qr()
+                intersd = round(cgm.interdaysd(), 2)
+                intrasd = round(cgm.intradaysd()[0], 2)
+                mage = round(cgm.MAGE(), 2)
+                jindex = round(cgm.J_index(), 2)
+                lgbi = round(cgm.LBGI(), 2)
+                hbgi = round(cgm.HBGI(), 2)
                 # adrr = round(cgm_metrics.ADRR(), 2)
-                modd = round(cgm_metrics.MODD(), 2)
-                conga = round(cgm_metrics.CONGA24(), 2)
-                gmi = round(cgm_metrics.GMI(), 2)
+                modd = round(cgm.MODD(), 2)
+                conga = round(cgm.CONGA24(), 2)
+                gmi = round(cgm.GMI(), 2)
 
                 col1.metric(label="Number of measurements", value=n_data)
                 col2.metric(label="Average Glucose", value=avg)
@@ -102,9 +101,9 @@ def main():
             with st.container():
                 
                 st.header('Visualize glucose data') 
-                cgm_metrics.histogram()
-                cgm_metrics.scatter()
-                cgm_metrics.one_day_scatter()
+                cgm.histogram()
+                cgm.scatter()
+                cgm.one_day_scatter()
 
 if __name__ == '__main__':
     main()
