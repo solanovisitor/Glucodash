@@ -1,13 +1,6 @@
-from logging import Filterer
 import streamlit as st
 from datetime import time
-from util import FinalData, CgmMetric #dexcom_preprocessing, libre_preprocessing, nightscout_preprocessing, filter_data
-from plots import histogram, one_day_scatter, scatter
-from metrics import (available_data, average_glucose,
-                    time_in_range, eA1c, hyper_time,
-                    hypo_time, sd, inter_qr, interdaysd,
-                    intradaysd, MAGE, J_index, LBGI,
-                    HBGI, ADRR, MODD, CONGA24, GMI, best_day)
+from util import CgmMetric
 # from auth_config import firebase_instances
 
 def main():
@@ -44,9 +37,6 @@ def main():
         devices = ['Freestyle Libre', 'Dexcom', 'Nightscout']
         device = st.selectbox('Select your device', devices)
         data = st.file_uploader('Upload the glucose data downloaded from the LibreView website', type='csv')
-        # if data is not None:
-        #     final_data = FinalData(data, device)
-        #     preprocessed_df = final_data.preprocessing()
         ranges = ['2 weeks', '1 month', '3 months', '6 months', '1 year', 'All times']
         day_names = ['Every Day', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         boolean = ['No', 'Yes']
@@ -64,13 +54,10 @@ def main():
             end_time = None
 
         if data is not None:
-            # final_data = FinalData(data, device, time_range, week_day, start_time, end_time)
-            # filtered_df = final_data.filter_data()
             cgm_metrics = CgmMetric(data, device, time_range, week_day, start_time, end_time)
             st.header('Check the resulting metrics below')
-            # b_day = cgm_metrics.available_data()
-            # st.subheader(f'The lowest GMI was on the {b_day}')
-            # st.subheader(CgmMetric.available_data())
+            b_day = cgm_metrics.best_day()
+            st.subheader(f'The lowest GMI was on the {b_day}')
 
             with st.container():
 
@@ -109,8 +96,6 @@ def main():
                 col4.metric(label="J-Index", value=jindex)
                 col1.metric(label="LBGI", value=lgbi)
                 col2.metric(label="HBGI", value=hbgi)
-                # col3.metric(label="ADRR", value=adrr)
-                # col4.metric(label="MODD", value=modd)
                 col3.metric(label="CONGA24", value=conga)
                 col4.metric(label="GMI", value=gmi)
 
