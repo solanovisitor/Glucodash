@@ -1,7 +1,7 @@
 from logging import Filterer
 import streamlit as st
 from datetime import time
-from util import FinalData #dexcom_preprocessing, libre_preprocessing, nightscout_preprocessing, filter_data
+from util import FinalData, CgmMetric #dexcom_preprocessing, libre_preprocessing, nightscout_preprocessing, filter_data
 from plots import histogram, one_day_scatter, scatter
 from metrics import (available_data, average_glucose,
                     time_in_range, eA1c, hyper_time,
@@ -64,34 +64,36 @@ def main():
             end_time = None
 
         if data is not None:
-            final_data = FinalData(data, device, time_range, week_day, start_time, end_time)
-            filtered_df = final_data.filter_data()
+            # final_data = FinalData(data, device, time_range, week_day, start_time, end_time)
+            # filtered_df = final_data.filter_data()
+            cgm_metrics = CgmMetric(data, device, time_range, week_day, start_time, end_time)
             st.header('Check the resulting metrics below')
-            b_day = best_day(filtered_df)
-            st.subheader(f'The lowest GMI was on the {b_day}')
+            # b_day = cgm_metrics.available_data()
+            # st.subheader(f'The lowest GMI was on the {b_day}')
+            # st.subheader(CgmMetric.available_data())
 
             with st.container():
 
                 col1, col2, col3, col4 = st.columns(4)
 
-                n_data = available_data(filtered_df)
-                avg = average_glucose(filtered_df)
-                std = sd(filtered_df)
-                ea1c = round(eA1c(filtered_df), 2)
-                trange = f'{time_in_range(filtered_df, n_data)}%'
-                thyper = f'{hyper_time(filtered_df, n_data)}%'
-                thypo = f'{hypo_time(filtered_df, n_data)}%'
-                # iqr = inter_qr(filtered_df)
-                # intersd = round(interdaysd(filtered_df), 2)
-                # intrasd = round(intradaysd(filtered_df)[0], 2)
-                # mage = round(MAGE(filtered_df), 2)
-                # jindex = round(J_index(filtered_df), 2)
-                # lgbi = round(LBGI(filtered_df), 2)
-                # hbgi = round(HBGI(filtered_df), 2)
-                # adrr = round(ADRR(filtered_df), 2)
-                # modd = round(MODD(filtered_df), 2)
-                # conga = round(CONGA24(filtered_df), 2)
-                gmi = round(GMI(filtered_df), 2)
+                n_data = cgm_metrics.available_data()
+                avg = round(cgm_metrics.average_glucose(), 2)
+                std = round(cgm_metrics.sd(),2)
+                ea1c = round(cgm_metrics.eA1c(), 2)
+                trange = f'{cgm_metrics.time_in_range()}%'
+                thyper = f'{cgm_metrics.hyper_time()}%'
+                thypo = f'{cgm_metrics.hypo_time()}%'
+                iqr = cgm_metrics.inter_qr()
+                intersd = round(cgm_metrics.interdaysd(), 2)
+                intrasd = round(cgm_metrics.intradaysd()[0], 2)
+                mage = round(cgm_metrics.MAGE(), 2)
+                jindex = round(cgm_metrics.J_index(), 2)
+                lgbi = round(cgm_metrics.LBGI(), 2)
+                hbgi = round(cgm_metrics.HBGI(), 2)
+                # adrr = round(cgm_metrics.ADRR(), 2)
+                modd = round(cgm_metrics.MODD(), 2)
+                conga = round(cgm_metrics.CONGA24(), 2)
+                gmi = round(cgm_metrics.GMI(), 2)
 
                 col1.metric(label="Number of measurements", value=n_data)
                 col2.metric(label="Average Glucose", value=avg)
@@ -100,24 +102,24 @@ def main():
                 col1.metric(label="Time in range", value=trange)
                 col2.metric(label='Time in hyper', value=thyper)
                 col3.metric(label='Time in hypo', value=thypo)
-                # col4.metric(label='Interquartile range', value=iqr)
-                # col1.metric(label="Interday SD", value=intersd)
-                # col2.metric(label="Intraday SD", value=intrasd)
-                # col3.metric(label="MAGE", value=mage)
-                # col4.metric(label="J-Index", value=jindex)
-                # col1.metric(label="LBGI", value=lgbi)
-                # col2.metric(label="HBGI", value=hbgi)
+                col4.metric(label='Interquartile range', value=iqr)
+                col1.metric(label="Interday SD", value=intersd)
+                col2.metric(label="Intraday SD", value=intrasd)
+                col3.metric(label="MAGE", value=mage)
+                col4.metric(label="J-Index", value=jindex)
+                col1.metric(label="LBGI", value=lgbi)
+                col2.metric(label="HBGI", value=hbgi)
                 # col3.metric(label="ADRR", value=adrr)
                 # col4.metric(label="MODD", value=modd)
-                # col2.metric(label="CONGA24", value=conga)
+                col3.metric(label="CONGA24", value=conga)
                 col4.metric(label="GMI", value=gmi)
 
             with st.container():
                 
                 st.header('Visualize glucose data') 
-                histogram(filtered_df)
-                scatter(filtered_df)
-                one_day_scatter(filtered_df)
+                cgm_metrics.histogram()
+                cgm_metrics.scatter()
+                cgm_metrics.one_day_scatter()
 
 if __name__ == '__main__':
     main()
