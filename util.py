@@ -62,14 +62,18 @@ class FinalData:
     def filter_data(self):
 
         df = self.preprocessing()
-        time = df['ds']
-        df['day_of_week'] = time.dt.day_name()
-        df['Day'] = time.dt.day
-        df['Hour'] = time.dt.strftime('%H')
-        df['dd_mm_yy'] = time.dt.strftime('%d/%m/%Y')
-        df['hh_mm'] = time.dt.strftime('%H:%M')
-        df.index = df['ds']
-        last_date = df['ds'][-1]
+        try:
+            time = df['ds']
+            df['day_of_week'] = time.dt.day_name()
+            df['Day'] = time.dt.day
+            df['Hour'] = time.dt.strftime('%H')
+            df['dd_mm_yy'] = time.dt.strftime('%d/%m/%Y')
+            df['hh_mm'] = time.dt.strftime('%H:%M')
+            df.index = df['ds']
+            last_date = df['ds'][-1]
+        except:
+            st.error('Your data is corruptded. Please check it for errors and be sure to upload the data immediatly after exported from the CGM website. If error continues, please contact us.')
+            st.stop()
 
         ranges = {'2 weeks': 14, '1 month': 30, '3 months': 90, '6 months': 180, '1 year': 365}
 
