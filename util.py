@@ -90,17 +90,18 @@ class FinalData:
             else:
                 df2 = None
         if self.week_day != 'Every Day':
-            df1 = df1.loc[df['day_of_week'] == self.week_day]
+            df1 = df1.loc[df1['day_of_week'] == self.week_day]
             if df2 is not None:
                 df2 = df2.loc[df2['day_of_week'] == self.week_day]
         if self.end_time is not None:
             df1 = df1.between_time(self.start_time, self.end_time)
+            df2 = df2.between_time(self.start_time, self.end_time)
 
-        return df1, df2
+        start_date = df1['ds'][0]
+        final_date = df1['ds'][-1]
 
-    # def get_start_end(self):
+        return df1, df2, start_date.strftime('%d/%m/%Y'), final_date.strftime('%d/%m/%Y')
 
-    #     starter = last_date-datetime.timedelta(days=curr_range)
 
 class CgmMetric:
 
