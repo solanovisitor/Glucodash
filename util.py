@@ -22,18 +22,36 @@ class FinalData:
 
         device_dict = {'Freestyle Libre': [4, 2], 'Dexcom': [7, 1], 'Nightscout': [-2, 3]}
         if self.device != 'Nightscout':
-            df = pd.read_csv(self.data, low_memory=False, delimiter=',', skiprows=1, on_bad_lines='skip')
+            try:
+                df = pd.read_csv(self.data, low_memory=False, delimiter=',', skiprows=1, on_bad_lines='skip')
+                df['y'] = df.iloc[:, device_dict[self.device][0]]
+                df['ds'] = df.iloc[:, device_dict[self.device][1]]
+            except:
+                st.error('Your data does not match with the specified device. Please check above.')
+                st.stop()
         else:
-            df = pd.read_csv(self.data, low_memory=False, delimiter=';', skiprows=1, on_bad_lines='skip')
-        df['y'] = df.iloc[:, device_dict[self.device][0]]
-        df['ds'] = df.iloc[:, device_dict[self.device][1]]
+            try:
+                df = pd.read_csv(self.data, low_memory=False, delimiter=';', skiprows=1, on_bad_lines='skip')
+                df['y'] = df.iloc[:, device_dict[self.device][0]]
+                df['ds'] = df.iloc[:, device_dict[self.device][1]]
+            except:
+                st.error('Your data does not match with the specified device. Please check above.')
+                st.stop()
         rest = df.drop(['y', 'ds'], axis=1)
         df.drop(rest, inplace=True, axis=1)
         df['ds'].drop_duplicates(inplace=True)
         if self.device == 'Freestyle Libre':
-            df['ds'] = pd.to_datetime(df['ds'], format='%m-%d-%Y %I:%M %p')
+            try:
+                df['ds'] = pd.to_datetime(df['ds'], format='%m-%d-%Y %I:%M %p')
+            except:
+                st.error('Your data does not match with the specified device. Please check above.')
+                st.stop()
         else:
-            df['ds'] = pd.to_datetime(df['ds'])
+            try:
+                df['ds'] = pd.to_datetime(df['ds'])
+            except:
+                st.error('Your data does not match with the specified device. Please check above.')
+                st.stop()
         df.sort_values(by=['ds'], inplace=True)
         df.dropna(inplace=True)
         df.reset_index(inplace=True, drop=True)
@@ -59,20 +77,32 @@ class FinalData:
             curr_range = ranges[self.time_range]
             starter = last_date-datetime.timedelta(days=curr_range)
             mask = (df['ds'] > starter) & (df['ds'] <= last_date)
-            df = df.loc[mask]
+            starter2 = starter-datetime.timedelta(days=curr_range)
+            mask2 = (df['ds'] > starter2) & (df['ds'] <= starter)
+            # st.dataframe(df[df.index.duplicated()])
+            df1 = df.loc[mask]
+            if mask2 is not None:
+                df2 = df.loc[mask2]
+            else:
+                df2 = None
         if self.week_day != 'Every Day':
-            df = df.loc[df['day_of_week'] == self.week_day]
+            df1 = df1.loc[df['day_of_week'] == self.week_day]
+            if df2 is not None:
+                df2 = df2.loc[df2['day_of_week'] == self.week_day]
         if self.end_time is not None:
-            df = df.between_time(self.start_time, self.end_time)
+            df1 = df1.between_time(self.start_time, self.end_time)
 
-        return df
+        return df1, df2
 
-class CgmMetric(FinalData):
+    # def get_start_end(self):
 
-    def __init__(self, data, device: str, time_range: str, week_day: str, start_time: str, end_time):
-        super().__init__(data, device, time_range, week_day, start_time, end_time)
+    #     starter = last_date-datetime.timedelta(days=curr_range)
 
-        self.filtered_df = super().filter_data
+class CgmMetric:
+
+    def __init__(self, filtered_df):
+
+        self.filtered_df = filtered_df
 
     def available_data(self):
         self.available_measurements = len(self.filtered_df)

@@ -1,6 +1,6 @@
 import streamlit as st
 from datetime import time
-from util import CgmMetric
+from util import FinalData ,CgmMetric
 # from auth_config import firebase_instances
 
 def main():
@@ -53,7 +53,13 @@ def main():
             start_time = None
             end_time = None
         if data is not None:
-            cgm = CgmMetric(data, device, time_range, week_day, start_time, end_time)
+            cgm_data = FinalData(data, device, time_range, week_day, start_time, end_time)
+            filtered_df, filtered_df2 = cgm_data.filter_data
+            cgm = CgmMetric(filtered_df)
+            if filtered_df2.empty:
+                cgm2 = None
+            else:
+                cgm2 = CgmMetric(filtered_df2)
             st.header('Check the resulting metrics below')
             b_day = cgm.best_day()
             st.subheader(f'The lowest GMI was on the {b_day}')
@@ -66,9 +72,12 @@ def main():
                 avg = round(cgm.average_glucose(), 2)
                 std = round(cgm.sd(),2)
                 ea1c = round(cgm.eA1c(), 2)
-                trange = f'{cgm.time_in_range()}%'
-                thyper = f'{cgm.hyper_time()}%'
-                thypo = f'{cgm.hypo_time()}%'
+                trange = cgm.time_in_range()
+                trange_str = f'{trange}%'
+                thyper = cgm.hyper_time()
+                thyper_str = f'{thyper}%'
+                thypo = cgm.hypo_time()
+                thypo_str = f'{thypo}%'
                 iqr = cgm.inter_qr()
                 intersd = round(cgm.interdaysd(), 2)
                 intrasd = round(cgm.intradaysd()[0], 2)
@@ -80,23 +89,61 @@ def main():
                 modd = round(cgm.MODD(), 2)
                 conga = round(cgm.CONGA24(), 2)
                 gmi = round(cgm.GMI(), 2)
+                
+                if cgm2 is not None:
 
-                col1.metric(label="Number of measurements", value=n_data)
-                col2.metric(label="Average Glucose", value=avg)
-                col3.metric(label="Standard Deviation (SD)", value=std)
-                col4.metric(label="Estimated A1c", value=ea1c)
-                col1.metric(label="Time in range", value=trange)
-                col2.metric(label='Time in hyper', value=thyper)
-                col3.metric(label='Time in hypo', value=thypo)
-                col4.metric(label='Interquartile range', value=iqr)
-                col1.metric(label="Interday SD", value=intersd)
-                col2.metric(label="Intraday SD", value=intrasd)
-                col3.metric(label="MAGE", value=mage)
-                col4.metric(label="J-Index", value=jindex)
-                col1.metric(label="LBGI", value=lgbi)
-                col2.metric(label="HBGI", value=hbgi)
-                col3.metric(label="CONGA24", value=conga)
-                col4.metric(label="GMI", value=gmi)
+                    n_data_delta = n_data-cgm2.available_data()
+                    avg_delta = round(avg-cgm2.average_glucose(), 2)
+                    std_delta = round(std-cgm2.sd(),2)
+                    ea1c_delta = round(ea1c-cgm2.eA1c(), 2)
+                    trange_delta = f'{round(trange-cgm2.time_in_range(), 2)}%'
+                    thyper_delta = f'{round(thyper-cgm2.hyper_time(), 2)}%'
+                    thypo_delta = f'{round(thypo-cgm2.hypo_time(), 2)}%'
+                    iqr_delta = iqr-cgm2.inter_qr()
+                    intersd_delta = round(intersd-cgm2.interdaysd(), 2)
+                    intrasd_delta = round(intrasd-cgm2.intradaysd()[0], 2)
+                    mage_delta = round(mage-cgm2.MAGE(), 2)
+                    jindex_delta = round(jindex-cgm2.J_index(), 2)
+                    lgbi_delta = round(lgbi-cgm2.LBGI(), 2)
+                    hbgi_delta = round(hbgi-cgm2.HBGI(), 2)
+                    modd_delta = round(modd-cgm2.MODD(), 2)
+                    conga_delta = round(conga-cgm2.CONGA24(), 2)
+                    gmi_delta = round(gmi-cgm2.GMI(), 2)
+
+                    col1.metric(label="Number of measurements", value=n_data, delta=n_data_delta)
+                    col2.metric(label="Average Glucose", value=avg, delta=avg_delta, delta_color="inverse")
+                    col3.metric(label="Standard Deviation (SD)", value=std, delta=std_delta, delta_color="inverse")
+                    col4.metric(label="Estimated A1c", value=ea1c, delta=ea1c_delta, delta_color="inverse")
+                    col1.metric(label="Time in range", value=trange_str, delta=trange_delta)
+                    col2.metric(label='Time in hyper', value=thyper_str, delta=thyper_delta, delta_color="inverse")
+                    col3.metric(label='Time in hypo', value=thypo_str, delta=thypo_delta, delta_color="inverse")
+                    col4.metric(label='Interquartile range', value=iqr, delta=iqr_delta, delta_color="inverse")
+                    col1.metric(label="Interday SD", value=intersd, delta=intersd_delta, delta_color="inverse")
+                    col2.metric(label="Intraday SD", value=intrasd, delta=intrasd_delta, delta_color="inverse")
+                    col3.metric(label="MAGE", value=mage, delta=mage_delta, delta_color="inverse")
+                    col4.metric(label="J-Index", value=jindex, delta=jindex_delta, delta_color="inverse")
+                    col1.metric(label="LBGI", value=lgbi, delta=lgbi_delta, delta_color="inverse")
+                    col2.metric(label="HBGI", value=hbgi, delta=hbgi_delta, delta_color="inverse")
+                    col3.metric(label="CONGA24", value=conga, delta=conga_delta, delta_color="inverse")
+                    col4.metric(label="GMI", value=gmi, delta=gmi_delta, delta_color="inverse")
+                
+                else:
+
+                    col1.metric(label="Number of measurements", value=n_data)
+                    col2.metric(label="Average Glucose", value=avg)
+                    col3.metric(label="Standard Deviation (SD)", value=std)
+                    col4.metric(label="Estimated A1c", value=ea1c)
+                    col2.metric(label='Time in hyper', value=thyper_str)
+                    col3.metric(label='Time in hypo', value=thypo_str)
+                    col4.metric(label='Interquartile range', value=iqr)
+                    col1.metric(label="Interday SD", value=intersd)
+                    col2.metric(label="Intraday SD", value=intrasd)
+                    col3.metric(label="MAGE", value=mage)
+                    col4.metric(label="J-Index", value=jindex)
+                    col1.metric(label="LBGI", value=lgbi)
+                    col2.metric(label="HBGI", value=hbgi)
+                    col3.metric(label="CONGA24", value=conga)
+                    col4.metric(label="GMI", value=gmi)
 
             with st.container():
                 
