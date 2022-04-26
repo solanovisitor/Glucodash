@@ -42,9 +42,7 @@ def main():
         boolean = ['No', 'Yes']
         #unit = st.radio('Select the unit of choice', units)
         st.session_state.time_range = st.selectbox('Select the amount of time for your analysis', ranges, index=2)
-        st.write(st.session_state.time_range)
         st.session_state.week_day = st.selectbox('Filter by day of week', day_names)
-        st.write(st.session_state.week_day)
         whole_day = st.radio('Do you want to select a time range?', boolean)
         if whole_day == 'Yes':
             hours = st.slider(
@@ -95,8 +93,7 @@ def main():
                 
                 if cgm2 is not None:
 
-                    st.info(f'Your actual metrics are compared to the previous {st.session_state.time_range} data. \n'
-                            f'Ex.: As you selected a {st.session_state.time_range} time range, your metrics will be compared to the previous {st.session_state.time_range} data.')
+                    st.info(f'As you selected a {st.session_state.time_range} time range, your metrics will be compared to the previous {st.session_state.time_range} data.')
 
                     st.session_state.n_data_delta = st.session_state.n_data-cgm2.available_data()
                     st.session_state.avg_delta = round(st.session_state.avg-cgm2.average_glucose(), 2)
