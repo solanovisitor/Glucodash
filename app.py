@@ -5,32 +5,6 @@ from util import FinalData ,CgmMetric
 
 def main():
 
-    # with st.sidebar:
-
-    #     auth, db, storage = firebase_instances()
-
-    #     st.title('EndoMetrics')
-
-    #     auth_menu = ['Login', 'Sign up']
-    #     choice = st.selectbox('Login/Signup', auth_menu)
-
-    #     email = st.text_input('Please enter your e-mail address')
-    #     password = st.text_input('Please enter your password')
-
-    #     if choice == 'Sign up':
-    #         handle = st.text_input('Please enter your username', value='Default')
-    #         submit = st.button('Create my account')
-
-    #         if submit:
-    #             user = auth.create_user_with_email_and_password(email, password)
-    #             st.success('Your account was created successfully')
-    #             st.balloons()
-    #             #Sign in
-    #             user = auth.sign_in_with_email_and_password(email, password)
-    #             db.child(user['localId']).child('Handle').set(handle)
-    #             db.child(user['localId']).child('ID').set(user['localId'])
-    #             st.title('Welcome ' + handle)
-
     with st.container():
         st.title('Dynamic Ambulatory Glucose Profile (dAGP)')
         st.header('Input your Libre data and select your filters')
