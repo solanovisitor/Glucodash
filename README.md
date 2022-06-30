@@ -13,7 +13,7 @@ A Blood Glucose data visualization tool.
 ## :mage: Basic usage
 **:file_folder: Clone the repository and open it.**
 ```bash
-https://github.com/solanovisitor/Glucodash.git
+git clone https://github.com/solanovisitor/Glucodash.git
 ```
 #### Install requirements:
 ```bash
