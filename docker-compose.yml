@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  glucodash:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: glucodash
+    restart: unless-stopped
+    ports:
+      - 8501:8501/tcp
+    logging:
+      driver: journald

@@ -24,6 +24,18 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
+#### :whale: Docker support: 
+1. Install Docker and Docker Compose plugin (Docker compose does not need to be intalled separatelly anymore)
+2. To build:
+```bash
+# Docker compose now is a plugin, not an external application
+docker compose build
+```
+2. To run:
+```bash
+docker compose up
+```
+
 ## Images
 <img width="600" alt="Screen Shot 2022-06-28 at 15 27 35" src="https://user-images.githubusercontent.com/60658814/176256423-9f486880-499f-483b-aa1f-750053296733.png">
 <img width="750" alt="Screen Shot 2022-06-28 at 16 10 35" src="https://user-images.githubusercontent.com/60658814/176265102-f46fbba2-36ef-4f40-9332-ee0cebf2d860.png">
