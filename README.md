@@ -14,6 +14,7 @@ A Blood Glucose data visualization tool.
 **:file_folder: Clone the repository and open it.**
 ```bash
 git clone https://github.com/solanovisitor/Glucodash.git
+cd Glucodash
 ```
 #### Install requirements:
 ```bash
