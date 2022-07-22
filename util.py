@@ -23,7 +23,7 @@ class FinalData:
         device_dict = {'Freestyle Libre': [4, 2], 'Dexcom': [7, 1], 'Nightscout': [-2, 3]}
         if self.device != 'Nightscout':
             try:
-                df = pd.read_csv(self.data, low_memory=False, delimiter=',', skiprows=1)
+                df = pd.read_csv(self.data, delimiter=',', skiprows=1)
                 df['y'] = df.iloc[:, device_dict[self.device][0]]
                 df['ds'] = df.iloc[:, device_dict[self.device][1]]
             except:
@@ -42,7 +42,7 @@ class FinalData:
         df['ds'].drop_duplicates(inplace=True)
         if self.device == 'Freestyle Libre':
             try:
-                df['ds'] = pd.to_datetime(df['ds'], format='%m-%d-%Y %I:%M %p')
+                df['ds'] = pd.to_datetime(df['ds'])
             except:
                 st.error('Your data does not match with the specified device. Please check above.')
                 st.stop()
