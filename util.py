@@ -40,18 +40,11 @@ class FinalData:
         rest = df.drop(['y', 'ds'], axis=1)
         df.drop(rest, inplace=True, axis=1)
         df['ds'].drop_duplicates(inplace=True)
-        if self.device == 'Freestyle Libre':
-            try:
-                df['ds'] = pd.to_datetime(df['ds'])
-            except:
-                st.error('Your data does not match with the specified device. Please check above.')
-                st.stop()
-        else:
-            try:
-                df['ds'] = pd.to_datetime(df['ds'])
-            except:
-                st.error('Your data does not match with the specified device. Please check above.')
-                st.stop()
+        try:
+            df['ds'] = pd.to_datetime(df['ds'])
+        except:
+            st.error('Your data does not match with the specified device. Please check above.')
+            st.stop()
         df.sort_values(by=['ds'], inplace=True)
         df.dropna(inplace=True)
         df.reset_index(inplace=True, drop=True)
