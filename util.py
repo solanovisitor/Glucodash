@@ -37,6 +37,8 @@ class FinalData:
             except:
                 st.error('Your data does not match with the specified device. Please check above.')
                 st.stop()
+        if df['y'].mean() < 40:
+            df['y'] = df['y'].apply(lambda x: x*18)
         rest = df.drop(['y', 'ds'], axis=1)
         df.drop(rest, inplace=True, axis=1)
         df['ds'].drop_duplicates(inplace=True)
