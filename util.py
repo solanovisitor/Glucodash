@@ -23,7 +23,7 @@ class FinalData:
         device_dict = {'Freestyle Libre': [4, 2], 'Dexcom': [7, 1], 'Nightscout': [-2, 3]}
         if self.device != 'Nightscout':
             try:
-                df = pd.read_csv(self.data, low_memory=False, delimiter=',', skiprows=1, on_bad_lines='skip')
+                df = pd.read_csv(self.data, low_memory=False, delimiter=',', skiprows=1)
                 df['y'] = df.iloc[:, device_dict[self.device][0]]
                 df['ds'] = df.iloc[:, device_dict[self.device][1]]
             except:
@@ -31,7 +31,7 @@ class FinalData:
                 st.stop()
         else:
             try:
-                df = pd.read_csv(self.data, low_memory=False, delimiter=';', skiprows=1, on_bad_lines='skip')
+                df = pd.read_csv(self.data, low_memory=False, delimiter=';', skiprows=1)
                 df['y'] = df.iloc[:, device_dict[self.device][0]]
                 df['ds'] = df.iloc[:, device_dict[self.device][1]]
             except:
